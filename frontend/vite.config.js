@@ -11,6 +11,17 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 9000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:7080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/auth': {
+        target: 'http://localhost:7080',
+        changeOrigin: true,
+      }
+    }
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

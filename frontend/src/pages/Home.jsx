@@ -74,7 +74,7 @@ const Home = () => {
             id: 5,
             title: "Core Synthesis",
             date: "Q2 2025",
-            content: "Final integration of sub-systems into the NeoFelis   central core.",
+            content: "Final integration of sub-systems into the NeoFelis Labs central core.",
             category: "Core",
             icon: Brain,
             relatedIds: [2, 4],
@@ -180,7 +180,7 @@ const Home = () => {
                                 transition={{ delay: 1.2, duration: 0.8 }}
                                 className="text-xl md:text-2xl text-text-muted mb-12 max-w-lg leading-relaxed"
                             >
-                                NeoFelis   transforms enterprise communication with calm, premium, and futuristic AI intelligence.
+                                NeoFelis Labs transforms enterprise communication with calm, premium, and futuristic AI intelligence.
                             </motion.p>
 
                             <motion.div
@@ -189,7 +189,15 @@ const Home = () => {
                                 transition={{ delay: 1.5, duration: 0.5 }}
                                 className="pointer-events-auto"
                             >
-                                <ShinyButton className="text-lg">
+                                <ShinyButton
+                                    className="text-lg"
+                                    onClick={() => {
+                                        const aboutSection = document.getElementById('about');
+                                        if (aboutSection) {
+                                            aboutSection.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }}
+                                >
                                     Explore Our Work
                                 </ShinyButton>
                             </motion.div>

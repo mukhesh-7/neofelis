@@ -83,7 +83,7 @@ const Header = () => {
                 >
                     <Link to="/" className="font-heading text-xl font-bold tracking-tight text-white flex items-center gap-2">
                         <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
-                        NeoFelis
+                        NeoFelis Labs
                     </Link>
                 </motion.div>
 

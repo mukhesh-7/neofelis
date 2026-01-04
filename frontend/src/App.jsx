@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
+import AuthSuccess from './pages/AuthSuccess';
 import SmoothScrolling from './components/SmoothScrolling';
 import './index.css';
 
@@ -42,11 +43,12 @@ const App = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Auth />} />
             <Route path="/signup" element={<Auth />} />
+            <Route path="/auth/success" element={<AuthSuccess />} />
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </main>
         <footer className="py-8 text-center text-text-muted text-sm border-t border-white/5 bg-bg">
-          <p>&copy; {new Date().getFullYear()} NeoFelis. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} NeoFelis Labs. All rights reserved.</p>
         </footer>
       </SmoothScrolling>
     </Router>

@@ -75,7 +75,7 @@ export function Typewriter({
 }
 
 const labelVariants = cva(
-    "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+    "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-300"
 );
 
 const Label = React.forwardRef(({ className, ...props }, ref) => (
@@ -127,7 +127,7 @@ const Input = React.forwardRef(
             <input
                 type={type}
                 className={cn(
-                    "flex h-10 w-full rounded-lg border border-input dark:border-input/50 bg-background px-3 py-3 text-sm text-foreground shadow-sm shadow-black/5 transition-shadow placeholder:text-muted-foreground/70 focus-visible:bg-accent focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+                    "flex h-10 w-full rounded-lg border border-white/20 bg-black/50 px-3 py-3 text-sm text-white shadow-sm shadow-black/5 transition-shadow placeholder:text-gray-500 focus-visible:bg-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 disabled:cursor-not-allowed disabled:opacity-50",
                     className
                 )}
                 ref={ref}
@@ -158,57 +158,97 @@ const PasswordInput = React.forwardRef(
 );
 PasswordInput.displayName = "PasswordInput";
 
-// --- Mock Auth Logic for Demonstration ---
-function useAuth() {
-    // In a real app, this would use Context or a store
-    const login = () => {
-        localStorage.setItem('isAuthenticated', 'true');
-        window.dispatchEvent(new Event('authChange'));
-        window.location.href = '/dashboard'; // simple redirect
-    };
-    return { login };
-}
+import { authService } from '../../services/authService';
 
 function SignInForm() {
-    const { login } = useAuth();
-    const handleSignIn = (event) => {
+    const [error, setError] = React.useState('');
+    const [loading, setLoading] = React.useState(false);
+
+    const handleSignIn = async (event) => {
         event.preventDefault();
-        console.log("UI: Sign In form submitted");
-        login();
+        setError('');
+        setLoading(true);
+
+        const formData = new FormData(event.target);
+        const email = formData.get('email');
+        const password = formData.get('password');
+
+        try {
+            await authService.login(email, password);
+            window.dispatchEvent(new Event('authChange'));
+            window.location.href = '/dashboard';
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
+
     return (
         <form onSubmit={handleSignIn} autoComplete="on" className="flex flex-col gap-8">
             <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold text-white">Sign in to your account</h1>
-                <p className="text-balance text-sm text-muted-foreground">Enter your email below to sign in</p>
+                <p className="text-balance text-sm text-gray-400">Enter your email below to sign in</p>
             </div>
+            {error && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                    {error}
+                </div>
+            )}
             <div className="grid gap-4">
                 <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" placeholder="m@example.com" required autoComplete="email" /></div>
                 <PasswordInput name="password" label="Password" required autoComplete="current-password" placeholder="Password" />
-                <Button type="submit" variant="outline" className="mt-2 bg-text text-bg hover:bg-white/90 font-bold">Sign In</Button>
+                <Button type="submit" variant="outline" className="mt-2 bg-text text-bg hover:bg-white/90 font-bold" disabled={loading}>
+                    {loading ? 'Signing In...' : 'Sign In'}
+                </Button>
             </div>
         </form>
     );
 }
 
 function SignUpForm() {
-    const { login } = useAuth();
-    const handleSignUp = (event) => {
+    const [error, setError] = React.useState('');
+    const [loading, setLoading] = React.useState(false);
+
+    const handleSignUp = async (event) => {
         event.preventDefault();
-        console.log("UI: Sign Up form submitted");
-        login();
+        setError('');
+        setLoading(true);
+
+        const formData = new FormData(event.target);
+        const name = formData.get('name');
+        const email = formData.get('email');
+        const password = formData.get('password');
+
+        try {
+            await authService.register(name, email, password);
+            window.dispatchEvent(new Event('authChange'));
+            window.location.href = '/dashboard';
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
+
     return (
         <form onSubmit={handleSignUp} autoComplete="on" className="flex flex-col gap-8">
             <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Create an account</h1>
-                <p className="text-balance text-sm text-muted-foreground">Enter your details below to sign up</p>
+                <h1 className="text-2xl font-bold text-white">Create an account</h1>
+                <p className="text-balance text-sm text-gray-400">Enter your details below to sign up</p>
             </div>
+            {error && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                    {error}
+                </div>
+            )}
             <div className="grid gap-4">
                 <div className="grid gap-1"><Label htmlFor="name">Full Name</Label><Input id="name" name="name" type="text" placeholder="John Doe" required autoComplete="name" /></div>
                 <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" placeholder="m@example.com" required autoComplete="email" /></div>
                 <PasswordInput name="password" label="Password" required autoComplete="new-password" placeholder="Password" />
-                <Button type="submit" variant="outline" className="mt-2 bg-text text-bg hover:bg-white/90 font-bold">Sign Up</Button>
+                <Button type="submit" variant="outline" className="mt-2 bg-text text-bg hover:bg-white/90 font-bold" disabled={loading}>
+                    {loading ? 'Creating Account...' : 'Sign Up'}
+                </Button>
             </div>
         </form>
     );
@@ -218,16 +258,16 @@ function AuthFormContainer({ isSignIn, onToggle }) {
     return (
         <div className="mx-auto grid w-[350px] gap-2">
             {isSignIn ? <SignInForm /> : <SignUpForm />}
-            <div className="text-center text-sm">
+            <div className="text-center text-sm text-gray-400">
                 {isSignIn ? "Don't have an account?" : "Already have an account?"}{" "}
-                <Button variant="link" className="pl-1 text-foreground hover:text-accent" onClick={onToggle}>
+                <Button variant="link" className="pl-1 text-white hover:text-blue-400" onClick={onToggle}>
                     {isSignIn ? "Sign up" : "Sign in"}
                 </Button>
             </div>
-            <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                <span className="relative z-10 bg-background px-2 text-muted-foreground">Or continue with</span>
+            <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-white/10">
+                <span className="relative z-10 bg-black px-2 text-gray-400">Or continue with</span>
             </div>
-            <Button variant="outline" type="button" onClick={() => console.log("UI: Google button clicked")}>
+            <Button variant="outline" type="button" onClick={() => authService.loginWithGoogle()}>
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google icon" className="mr-2 h-4 w-4" />
                 Continue with Google
             </Button>
@@ -242,7 +282,7 @@ const defaultSignInContent = {
     },
     quote: {
         text: "Welcome Back! The journey continues.",
-        author: "NeoFelis  l"
+        author: "  l"
     }
 };
 
@@ -253,7 +293,7 @@ const defaultSignUpContent = {
     },
     quote: {
         text: "Create an account. A new chapter awaits.",
-        author: "NeoFelis  l"
+        author: "  l"
     }
 };
 
@@ -280,7 +320,7 @@ export function AuthUI({ signInContent = {}, signUpContent = {} }) {
           display: none;
         }
       `}</style>
-            <div className="flex h-screen items-center justify-center p-6 md:h-auto md:p-0 md:py-12 bg-bg">
+            <div className="flex h-screen items-center justify-center p-6 md:h-auto md:p-0 md:py-12 bg-black">
                 <AuthFormContainer isSignIn={isSignIn} onToggle={toggleForm} />
             </div>
 
@@ -290,10 +330,10 @@ export function AuthUI({ signInContent = {}, signUpContent = {} }) {
                 key={currentContent.image.src}
             >
 
-                <div className="absolute inset-x-0 bottom-0 h-[100px] bg-gradient-to-t from-bg to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-[100px] bg-gradient-to-t from-black to-transparent" />
 
                 <div className="relative z-10 flex h-full flex-col items-center justify-end p-2 pb-6">
-                    <blockquote className="space-y-2 text-center text-foreground">
+                    <blockquote className="space-y-2 text-center text-white">
                         <p className="text-lg font-medium">
                             “<Typewriter
                                 key={currentContent.quote.text}
@@ -301,7 +341,7 @@ export function AuthUI({ signInContent = {}, signUpContent = {} }) {
                                 speed={60}
                             />”
                         </p>
-                        <cite className="block text-sm font-light text-muted-foreground not-italic">
+                        <cite className="block text-sm font-light text-gray-400 not-italic">
                             — {currentContent.quote.author}
                         </cite>
                     </blockquote>

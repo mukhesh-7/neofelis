@@ -34,12 +34,12 @@ const products = [
         demoLink: "#"
     },
     {
-        title: "Nikki",
+        title: "Filli",
         category: "AI Vision",
         image: niki,
         id: "03",
         description: "Computer vision made human",
-        abstract: "Nikki interprets visual data with context-aware algorithms, solving the problem of false positives in security and autonomous driving systems by understanding scene semantics.",
+        abstract: "Filli interprets visual data with context-aware algorithms, solving the problem of false positives in security and autonomous driving systems by understanding scene semantics.",
         demoLink: "#"
     },
     {
