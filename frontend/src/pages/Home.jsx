@@ -248,7 +248,7 @@ const Home = () => {
                         playsInline
                         className="w-full h-full object-cover opacity-70"
                     >
-                        <source src="/src/assets/brain.mp4" type="video/mp4" />
+                        <source src="./assets/brain.mp4" type="video/mp4" />
                     </video>
                     {/* Dark Overlay for readability */}
                     <div className="absolute inset-0 bg-black/40"></div>

@@ -10,7 +10,7 @@ import Dashboard from './pages/Dashboard';
 import AuthSuccess from './pages/AuthSuccess';
 import SmoothScrolling from './components/SmoothScrolling';
 import './index.css';
-
+import mp4 from "./assets/brain.mp4";
 // Scroll handling
 const ScrollHandler = () => {
   const { pathname, hash } = useLocation();
